@@ -9,7 +9,7 @@ Gene Finder Mini Project 1
 import random
 from amino_acids import aa, codons, aa_table   # you may find these useful
 from load import load_seq
-
+dna = load_seq("./data/X73525.fa")
 
 def shuffle_string(s):
     """Shuffles the characters in the input string
@@ -172,12 +172,21 @@ def find_all_ORFs_both_strands(dna):
 def longest_ORF(dna):
     """ Finds the longest ORF on both strands of the specified DNA and returns it
         as a string
+        Added unit test is for when there are multiple orfs to iterate through
     >>> longest_ORF("ATGCGAATGTAGCATCAAA")
     'ATGCTACATTCGCAT'
+    >>> longest_ORF("ATGCATGAATGTAG")
+    'ATGCATGAATGTAG'
     """
     # TODO: implement this
     pass
+    all_orfs = find_all_ORFs_both_strands(dna)
+    longest_orf = all_orfs[0]
+    for item in all_orfs:
+        if len(item) > len(longest_orf):
+            longest_orf = item
 
+    return longest_orf
 
 def longest_ORF_noncoding(dna, num_trials):
     """ Computes the maximum length of the longest ORF over num_trials shuffles
@@ -187,8 +196,21 @@ def longest_ORF_noncoding(dna, num_trials):
         num_trials: the number of random shuffles
         returns: the maximum length longest ORF """
     # TODO: implement this
-    pass
 
+    maxOrfLength = 0
+    #allLengths = [] #for testing
+    for i in range(num_trials):
+        sequence = shuffle_string(dna)
+        orf = longest_ORF(sequence)
+        #allLengths.append(len(orf)) #for testing
+        if len(orf) > maxOrfLength:
+            maxOrfLength = len(orf)
+
+    #print(allLengths) #for testing
+    #print(maxOrfLength)
+    return maxOrfLength
+
+longest_ORF_noncoding(dna, 100)
 
 def coding_strand_to_AA(dna):
     """ Computes the Protein encoded by a sequence of DNA.  This function
@@ -205,8 +227,13 @@ def coding_strand_to_AA(dna):
         'MPA'
     """
     # TODO: implement this
-    pass
+    aa = ''
+    i = 0
+    while i <=  len(dna) - 3:
+        aa += aa_table[dna[i:i+3]]
+        i += 3
 
+    return aa
 
 def gene_finder(dna):
     """ Returns the amino acid sequences that are likely coded by the specified dna
@@ -215,12 +242,32 @@ def gene_finder(dna):
         returns: a list of all amino acid sequences coded by the sequence dna.
     """
     # TODO: implement this
-    pass
+    threshold = longest_ORF_noncoding(dna, 1500) #threshold is allLengths
+    all_orf_both = find_all_ORFs_both_strands(dna)
+    i = 0
+    aa = []
+    #have only orfs longer than threshold
+    while i < len(all_orf_both):
+        if len(all_orf_both[i]) < threshold:
+            all_orf_both.pop(i)
+        else:
+            i += 1
+
+    #get list of amino amino_acids
+    for item in all_orf_both:
+        aa.append(coding_strand_to_AA(item))
+
+    print(aa)
+    for item in aa:
+        print(item)
+
+gene_finder(dna)
 
 
-#UNCOMMENT OUT TO RUN DOCTESTS
+
+
 
 if __name__ == "__main__":
     import doctest
     #doctest.testmod()
-    doctest.run_docstring_examples(find_all_ORFs_oneframe, globals(), verbose = False)
+    #doctest.run_docstring_examples(coding_strand_to_AA, globals(), verbose = True)
