@@ -3,7 +3,6 @@
 Gene Finder Mini Project 1
 
 @author: scoleman
-
 """
 
 import random
@@ -25,13 +24,13 @@ def get_complement(nucleotide):
 
         nucleotide: a nucleotide (A, C, G, or T) represented as a string
         returns: the complementary nucleotide
+    Added unit test for if there is no A T C G entered
     >>> get_complement('A')
     'T'
     >>> get_complement('C')
     'G'
     >>> get_complement('')
     ''
-    Added the above test case for if there is no A T C G entered
     """
     # TODO: implement this
     if nucleotide == 'A':
@@ -82,13 +81,14 @@ def rest_of_ORF(dna):
 
         dna: a DNA sequence
         returns: the open reading frame represented as a string
+        Added unit test for when the dna sequence does not end with a stop codon (it returns the whole string)
+
     >>> rest_of_ORF("ATGTGAA")
     'ATG'
     >>> rest_of_ORF("ATGAGATAGG")
     'ATGAGA'
     >>> rest_of_ORF('ATGAGATCCC')
     'ATGAGATCCC'
-    Added above unit test for when the dna sequence does not end with a stop codon (it returns the whole string)
     """
     # TODO: implement this
     orf = ''
@@ -121,9 +121,8 @@ def find_all_ORFs_oneframe(dna):
 
     orfs = []
     i = 0
-    start_codon = 'ATG'
     while i <  len(dna):
-        if dna[i:i+3] == start_codon:
+        if dna[i:i+3] == 'ATG':
             orf = rest_of_ORF(dna[i:])
             orfs.append(orf)
             i += len(orf) + 3
@@ -146,7 +145,6 @@ def find_all_ORFs(dna):
     """
     # TODO: implement this
     all_orfs = []
-    x = 0
     for i in range(0,3):
         all_orfs += find_all_ORFs_oneframe(dna[i:])
         i += 1
@@ -194,7 +192,10 @@ def longest_ORF_noncoding(dna, num_trials):
 
         dna: a DNA sequence
         num_trials: the number of random shuffles
-        returns: the maximum length longest ORF """
+        returns: the maximum length longest ORF
+        To test, I entered a short string of dna and a small number of trials. I added the lengths of each orf into a list and printed the list.
+        I then ensured the longest length is what is returned. Once I tested this a few times, I commented out the lines I used for testing.
+        """
     # TODO: implement this
 
     maxOrfLength = 0
@@ -210,8 +211,6 @@ def longest_ORF_noncoding(dna, num_trials):
     #print(maxOrfLength)
     return maxOrfLength
 
-longest_ORF_noncoding(dna, 100)
-
 def coding_strand_to_AA(dna):
     """ Computes the Protein encoded by a sequence of DNA.  This function
         does not check for start and stop codons (it assumes that the input
@@ -220,6 +219,7 @@ def coding_strand_to_AA(dna):
         dna: a DNA sequence represented as a string
         returns: a string containing the sequence of amino acids encoded by the
                  the input DNA fragment
+        These unit tests cover what is needed
 
         >>> coding_strand_to_AA("ATGCGA")
         'MR'
@@ -227,13 +227,13 @@ def coding_strand_to_AA(dna):
         'MPA'
     """
     # TODO: implement this
-    aa = ''
+    amino_acid = ''
     i = 0
     while i <=  len(dna) - 3:
-        aa += aa_table[dna[i:i+3]]
+        amino_acid += aa_table[dna[i:i+3]]
         i += 3
 
-    return aa
+    return amino_acid
 
 def gene_finder(dna):
     """ Returns the amino acid sequences that are likely coded by the specified dna
@@ -242,10 +242,11 @@ def gene_finder(dna):
         returns: a list of all amino acid sequences coded by the sequence dna.
     """
     # TODO: implement this
-    threshold = longest_ORF_noncoding(dna, 1500) #threshold is allLengths
+    threshold = longest_ORF_noncoding(dna, 1500)
     all_orf_both = find_all_ORFs_both_strands(dna)
     i = 0
     aa = []
+
     #have only orfs longer than threshold
     while i < len(all_orf_both):
         if len(all_orf_both[i]) < threshold:
@@ -258,16 +259,13 @@ def gene_finder(dna):
         aa.append(coding_strand_to_AA(item))
 
     print(aa)
+    #make it easier to copy and paste aa into Blast
     for item in aa:
         print(item)
 
 gene_finder(dna)
 
-
-
-
-
 if __name__ == "__main__":
     import doctest
-    #doctest.testmod()
-    #doctest.run_docstring_examples(coding_strand_to_AA, globals(), verbose = True)
+    doctest.testmod()
+    #doctest.run_docstring_examples(get_complement, globals(), verbose = True)
