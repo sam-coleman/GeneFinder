@@ -50,12 +50,12 @@ def get_reverse_complement(dna):
 
         dna: a DNA sequence represented as a string
         returns: the reverse complementary DNA sequence represented as a string
+
+        The unit tests covers the cases
     >>> get_reverse_complement("ATGCCCGCTTT")
     'AAAGCGGGCAT'
     >>> get_reverse_complement("CCGCGTTCA")
     'TGAACGCGG'
-
-    The above unit tests cover the cases
     """
     # TODO: implement this
     reverse_comp = ''
@@ -112,9 +112,13 @@ def find_all_ORFs_oneframe(dna):
 
         dna: a DNA sequence
         returns: a list of non-nested ORFs
+
+        added unit test for if dna doesn't begin with start codon
     >>> find_all_ORFs_oneframe("ATGCATGAATGTAGATAGATGTGCCC")
     ['ATGCATGAATGTAGA', 'ATGTGCCC']
     >>> find_all_ORFs_oneframe("ATGCGTAATGCCT")
+    ['ATGCGTAATGCCT']
+    >>> find_all_ORFs_oneframe("CTTATGCGTAATGCCT")
     ['ATGCGTAATGCCT']
     """
     # TODO: implement this
@@ -267,5 +271,5 @@ gene_finder(dna)
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
-    #doctest.run_docstring_examples(get_complement, globals(), verbose = True)
+    #doctest.testmod()
+    doctest.run_docstring_examples(find_all_ORFs_oneframe, globals(), verbose = False)
